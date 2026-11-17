@@ -1,0 +1,292 @@
+@import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  /* Brass accent — selection, links, the forecast line */
+  --primary: #e0b463;
+  --primary-dark: #cfa048;
+  --primary-contrast: #141415;
+
+  /* Semantic, toned to sit inside the graphite ramp */
+  --finance-green: #4cc38a;
+  --finance-red: #e5484d;
+  --finance-yellow: #d98f3f;
+  --finance-blue: #e0b463;
+  --finance-purple: #a78bfa;
+
+  /* Graphite ramp: deepest → page → card → raised */
+  --bg-deepest: #0f0f10;
+  --bg-primary: #141415;
+  --bg-secondary: #1a1a1c;
+  --bg-card: #19191b;
+  --bg-raised: #26262a;
+
+  /* Three text roles */
+  --text-primary: #ededed;
+  --text-secondary: #a1a1a6;
+  --text-muted: #85858b;
+
+  /* Hairlines: primary text at 8% */
+  --hairline: rgba(237, 237, 237, 0.08);
+  --border-color: #26262a;
+  --border-strong: #34343a;
+
+  --ease: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+* {
+  box-sizing: border-box;
+  direction: rtl;
+}
+
+html,
+body {
+  direction: rtl;
+  font-family: 'Tajawal', system-ui, sans-serif;
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  min-height: 100vh;
+}
+
+body {
+  overflow-x: hidden;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5 {
+  font-weight: 500;
+}
+
+/* RTL Support */
+[dir='rtl'] {
+  text-align: right;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--bg-deepest);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--border-strong);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #4c4c53;
+}
+
+/* Keyboard focus is always visible, in the accent */
+:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+}
+
+/* Card — one padding, one radius, hairline edge */
+.card {
+  @apply rounded-xl p-5 border transition-colors;
+  background-color: var(--bg-card);
+  border-color: var(--border-color);
+}
+
+/* Buttons — primary is an off-white fill with dark text,
+   the brass accent stays in the selection and the chart. */
+.btn-primary {
+  @apply px-4 py-2 rounded-lg font-medium transition-colors;
+  background-color: var(--text-primary);
+  color: var(--primary-contrast);
+}
+
+.btn-primary:hover {
+  background-color: #d7d6d3;
+}
+
+.btn-secondary {
+  @apply px-4 py-2 rounded-lg font-medium transition-colors border;
+  border-color: var(--border-strong);
+  color: var(--text-primary);
+}
+
+.btn-secondary:hover {
+  background-color: var(--bg-raised);
+}
+
+.btn-danger {
+  @apply px-4 py-2 rounded-lg font-medium transition-colors;
+  background-color: #b02f34;
+  color: #fff;
+}
+
+.btn-danger:hover {
+  background-color: #cf3b40;
+}
+
+.btn-ghost {
+  @apply px-4 py-2 rounded-lg font-medium transition-colors;
+  color: var(--text-secondary);
+}
+
+.btn-ghost:hover {
+  background-color: var(--bg-raised);
+  color: var(--text-primary);
+}
+
+/* Input — a well in the surface, brass ring on focus */
+.input {
+  @apply w-full px-4 py-2.5 rounded-lg border text-sm transition-colors outline-none;
+  background-color: var(--bg-primary);
+  border-color: var(--border-strong);
+  color: var(--text-primary);
+}
+
+.input:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(224, 180, 99, 0.16);
+}
+
+.input::placeholder {
+  color: var(--text-muted);
+}
+
+/* Badge — a quiet tag, not a glowing pill */
+.badge {
+  @apply inline-flex items-center gap-1 px-2 py-0.5 rounded text-xs font-normal;
+}
+
+.badge-green {
+  @apply badge;
+  background-color: rgba(76, 195, 138, 0.12);
+  color: #4cc38a;
+}
+
+.badge-red {
+  @apply badge;
+  background-color: rgba(229, 72, 77, 0.12);
+  color: #e5484d;
+}
+
+.badge-yellow {
+  @apply badge;
+  background-color: rgba(217, 143, 63, 0.14);
+  color: #d98f3f;
+}
+
+.badge-blue {
+  @apply badge;
+  background-color: rgba(224, 180, 99, 0.14);
+  color: #e0b463;
+}
+
+.badge-purple {
+  @apply badge;
+  background-color: rgba(167, 139, 250, 0.14);
+  color: #a78bfa;
+}
+
+/* Progress — a thin track, never a glowing pill */
+.progress-bar {
+  @apply h-1.5 rounded-sm overflow-hidden;
+  background-color: var(--bg-raised);
+}
+
+.progress-bar-fill {
+  @apply h-full rounded-sm transition-colors;
+}
+
+/* Chart tooltip */
+.chart-tooltip {
+  @apply p-3 rounded-lg text-sm;
+  background-color: var(--bg-raised);
+  border: 1px solid var(--border-strong);
+  box-shadow: none;
+}
+
+/* Keycap for shortcuts */
+.kbd {
+  @apply inline-flex items-center rounded px-1.5 font-mono;
+  height: 18px;
+  font-size: 11px;
+  line-height: 1;
+  color: var(--text-muted);
+  background-color: var(--bg-primary);
+  border: 1px solid var(--border-color);
+}
+
+/* One easing curve, one short entrance */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in {
+  animation: fadeIn 320ms var(--ease);
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateX(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.animate-slide-in {
+  animation: slideIn 220ms var(--ease);
+}
+
+/* ─── Print (تقرير الطباعة/PDF) ─────────────────────────────────────────── */
+@media print {
+  /* Chrome stays out of the paper: sidebar, top bar, controls. */
+  aside,
+  header,
+  .no-print {
+    display: none !important;
+  }
+
+  body,
+  main,
+  .card {
+    background: #fff !important;
+    color: #111 !important;
+    border-color: #d4d4d8 !important;
+    box-shadow: none !important;
+  }
+
+  /* Dark-theme text would vanish on paper — force ink colors. */
+  .card,
+  .card * {
+    color: #111 !important;
+  }
+
+  main {
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+
+  .card {
+    break-inside: avoid;
+    page-break-inside: avoid;
+    margin-bottom: 12px;
+    padding: 14px !important;
+  }
+}

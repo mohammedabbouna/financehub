@@ -1,0 +1,4 @@
+# FinanceHub worker schedule (busybox crond format: min hour dom mon dow cmd)
+# Runs every 5 minutes; bin/worker.php is idempotent so overlapping or
+# repeated runs are safe (dedup keys + daily guards on every task).
+*/5 * * * * php /var/www/bin/worker.php all >> /var/www/storage/logs/worker-cron.log 2>&1

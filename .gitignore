@@ -1,0 +1,32 @@
+# Environment
+.env
+.env.local
+.env.production
+
+# Dependencies
+node_modules/
+vendor/
+
+# Next.js
+.next/
+out/
+
+# Runtime
+backend/storage/cache/*
+backend/storage/logs/*
+!backend/storage/cache/.gitkeep
+!backend/storage/logs/.gitkeep
+
+# Docker
+nginx/ssl/*.pem
+nginx/ssl/*.key
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
