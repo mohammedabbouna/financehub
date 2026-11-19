@@ -1,5 +1,5 @@
 // FinanceHub service worker — offline-first PWA shell.
-const CACHE_VERSION = 'fh-v1';
+const CACHE_VERSION = 'fh-v2';
 const STATIC_CACHE = `${CACHE_VERSION}-static`;
 const RUNTIME_CACHE = `${CACHE_VERSION}-runtime`;
 const OFFLINE_URL = '/offline.html';
@@ -33,6 +33,20 @@ self.addEventListener('fetch', (event) => {
 
   // Only handle GET.
   if (req.method !== 'GET') return;
+
+  // Navigation requests (HTML): network-first so users always get fresh app shell.
+  if (req.mode === 'navigate') {
+    event.respondWith(
+      fetch(req)
+        .then((res) => {
+          const copy = res.clone();
+          caches.open(RUNTIME_CACHE).then((c) => c.put(req, copy)).catch(() => {});
+          return res;
+        })
+        .catch(() => caches.match(req).then((r) => r || caches.match(OFFLINE_URL)))
+    );
+    return;
+  }
 
   // API calls: network-first, fall back to cache, then offline page.
   if (url.pathname.startsWith('/api/') || url.pathname.startsWith('/api/v1/')) {

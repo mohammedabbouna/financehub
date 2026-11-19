@@ -9,7 +9,7 @@ class User
 {
     public static function findById(int $id): ?array
     {
-        $stmt = Database::getConnection()->prepare('SELECT id, name, email, created_at, ai_api_key, ai_provider, ai_base_url, ai_model, totp_enabled FROM users WHERE id = ?');
+        $stmt = Database::getConnection()->prepare('SELECT id, name, email, created_at, ai_api_key, ai_provider, ai_base_url, ai_model, totp_enabled, business_mode FROM users WHERE id = ?');
         $stmt->execute([$id]);
         return $stmt->fetch() ?: null;
     }
@@ -182,5 +182,20 @@ class User
         Database::getConnection()
             ->prepare('UPDATE users SET recovery_codes = ? WHERE id = ?')
             ->execute([json_encode($codes), $id]);
+    }
+
+    public static function isBusinessMode(int $id): bool
+    {
+        $stmt = Database::getConnection()->prepare('SELECT business_mode FROM users WHERE id = ?');
+        $stmt->execute([$id]);
+        $row = $stmt->fetch();
+        return (bool)($row['business_mode'] ?? false);
+    }
+
+    public static function setBusinessMode(int $id, bool $enabled): void
+    {
+        Database::getConnection()
+            ->prepare('UPDATE users SET business_mode = ? WHERE id = ?')
+            ->execute([$enabled ? 1 : 0, $id]);
     }
 }

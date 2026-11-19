@@ -23,7 +23,7 @@ export default function SettingsPage() {
   const { user, refreshUser } = useAuth();
   const toast = useToast();
   const queryClient = useQueryClient();
-  const [activeTab, setActiveTab] = useState<'profile' | 'password' | 'ai' | 'notifications' | 'security' | 'allocations'>('profile');
+  const [activeTab, setActiveTab] = useState<'profile' | 'password' | 'ai' | 'notifications' | 'security' | 'business' | 'allocations'>('profile');
 
   // Profile form (initialized from context, reset on user change).
   const [name, setName] = useState(user?.name || '');
@@ -65,6 +65,17 @@ export default function SettingsPage() {
   const [totpSetup, setTotpSetup] = useState<{ secret: string; otpauth_uri: string; recovery_codes: string[] } | null>(null);
   const [totpCode, setTotpCode] = useState('');
   const [totpLoading, setTotpLoading] = useState(false);
+
+  // business mode state
+  const { data: bizData } = useQuery({
+    queryKey: ['business-mode'],
+    queryFn: () => api.getBusinessMode(),
+    enabled: activeTab === 'business',
+  });
+  const [bizEnabled, setBizEnabled] = useState(false);
+  React.useEffect(() => {
+    if (bizData) setBizEnabled(!!bizData.business_mode);
+  }, [bizData]);
 
   React.useEffect(() => {
     if (activeTab !== 'notifications') return;
@@ -222,6 +233,16 @@ export default function SettingsPage() {
         </button>
         <button
           type="button"
+          onClick={() => setActiveTab('business')}
+          aria-pressed={activeTab === 'business'}
+          className={`rounded-lg px-4 py-2 text-sm font-medium transition-colors ${
+            activeTab === 'business' ? 'bg-blue-500/15 text-blue-400' : 'bg-gray-800 text-gray-400 hover:text-gray-100'
+          }`}
+        >
+          وضع الأعمال
+        </button>
+        <button
+          type="button"
           onClick={() => setActiveTab('allocations')}
           aria-pressed={activeTab === 'allocations'}
           className={`rounded-lg px-4 py-2 text-sm font-medium transition-colors ${
@@ -268,7 +289,7 @@ export default function SettingsPage() {
                 dir="ltr"
               />
             </div>
-            <div className="flex items-center gap-2 rounded-lg border border-white/[0.06] bg-gray-800/40 p-3 text-sm text-gray-400">
+            <div className="flex items-center gap-2 rounded-lg border border-gray-100/[0.06] bg-gray-800/40 p-3 text-sm text-gray-400">
               <Glyph name="🔒" size={16} />
               يتم تشفير جميع بياناتك بشكل آمن
             </div>
@@ -356,7 +377,7 @@ export default function SettingsPage() {
             اختر المزود (Anthropic/OpenAI/متوافق مع OpenAI) وأدخل المفتاح. إذا لم تُدخل مفتاحاً، يعمل النظام
             بالتحليل المحلي. المفتاح يُخزَّن per-user.
           </p>
-          <div className="mb-4 rounded-lg border border-white/[0.06] bg-gray-800/40 p-3 text-sm">
+          <div className="mb-4 rounded-lg border border-gray-100/[0.06] bg-gray-800/40 p-3 text-sm">
             <p className="text-gray-400">
               الحالة: <span className="text-gray-100">{aiKeyData?.has_key ? 'مفتاح مخصص محفوظ' : aiKeyData?.source === 'env' ? 'يستخدم المفتاح العام (env)' : 'لا يوجد مفتاح — وضع محلي'}</span>
             </p>
@@ -466,7 +487,7 @@ export default function SettingsPage() {
             <p className="text-sm text-amber-400">المتصفح لا يدعم إشعارات Push.</p>
           ) : (
             <div className="space-y-4">
-              <div className="rounded-lg border border-white/[0.06] bg-gray-800/40 p-3 text-sm">
+              <div className="rounded-lg border border-gray-100/[0.06] bg-gray-800/40 p-3 text-sm">
                 <p className="text-gray-400">
                   الحالة: <span className="text-gray-100">{pushSubscribed ? 'مشترك ✓' : 'غير مشترك'}</span>
                 </p>
@@ -541,7 +562,7 @@ export default function SettingsPage() {
                 </button>
               ) : (
                 <div className="space-y-4">
-                  <div className="rounded-lg border border-white/[0.06] bg-gray-800/40 p-4 text-center">
+                  <div className="rounded-lg border border-gray-100/[0.06] bg-gray-800/40 p-4 text-center">
                     <p className="mb-2 text-sm text-gray-400">امسح رمز QR في تطبيق المصادقة</p>
                     <img
                       src={`https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(totpSetup.otpauth_uri)}`}
@@ -620,6 +641,41 @@ export default function SettingsPage() {
         </div>
       )}
 
+      {activeTab === 'business' && (
+        <div className="card max-w-2xl">
+          <h3 className="mb-4 text-[15px] font-medium text-gray-100">وضع الأعمال (Business Mode)</h3>
+          <p className="mb-4 text-sm text-gray-400">
+            فعّل وضع الأعمال لعرض أقسام العملاء، الفواتير (Invoices)، والأرباح والخسائر (P&L) في القائمة الجانبية.
+          </p>
+          <div className="flex items-center justify-between rounded-lg border border-gray-100/[0.06] bg-gray-800/40 p-4">
+            <div>
+              <p className="text-sm text-gray-200">وضع الأعمال</p>
+              <p className="text-xs text-gray-500">{bizEnabled ? 'مُفعَّل' : 'معطّل'}</p>
+            </div>
+            <button
+              type="button"
+              className={bizEnabled ? 'btn-secondary' : 'btn-primary'}
+              onClick={async () => {
+                try {
+                  const r = await api.setBusinessMode(!bizEnabled);
+                  setBizEnabled(r.business_mode);
+                  toast.success(r.message);
+                } catch (e) {
+                  toast.error(apiErrorMessage(e, 'تعذر التحديث.'));
+                }
+              }}
+            >
+              {bizEnabled ? 'تعطيل' : 'تفعيل'}
+            </button>
+          </div>
+          {bizEnabled && (
+            <p className="mt-4 text-xs text-gray-500">
+              أقسام الأعمال (العملاء، الفواتير، P&L) متاحة الآن في القائمة الجانبية.
+            </p>
+          )}
+        </div>
+      )}
+
       {activeTab === 'allocations' && (
         <div className="card max-w-3xl">
           <h3 className="mb-4 text-[15px] font-medium text-gray-100">قواعد التوزيع الذكي للدخل</h3>
@@ -642,7 +698,7 @@ export default function SettingsPage() {
               {rules.map((rule) => (
                 <div
                   key={rule.id}
-                  className="flex items-center justify-between gap-3 border-b border-white/[0.06] py-3 last:border-0 last:pb-0 first:pt-0"
+                  className="flex items-center justify-between gap-3 border-b border-gray-100/[0.06] py-3 last:border-0 last:pb-0 first:pt-0"
                 >
                   <div className="flex min-w-0 items-center gap-3">
                     <span className="flex w-[18px] shrink-0 justify-center">

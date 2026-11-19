@@ -300,6 +300,10 @@ class ActionController
         // Anomaly detection (outside the write transaction — read-only).
         $createdAction = Action::findById($actionId);
         if ($createdAction) {
+            // Learn category preference from this action (auto-categorization).
+            if (!empty($data['category_id']) && !empty($data['description'])) {
+                \FinanceHub\Models\CategoryPreference::upsert($userId, (string)$data['description'], (int)$data['category_id']);
+            }
             $anomaly = $this->ai->detectAnomaly($userId, $createdAction);
             if ($anomaly) {
                 $anomaly['action_id'] = $actionId;
@@ -318,6 +322,7 @@ class ActionController
         }
 
         $action = Action::findById($actionId);
+        \FinanceHub\Models\AuditLog::record($userId, 'create', 'action', $actionId, ['type' => $type, 'amount' => $amount], $request->getServerParams()['REMOTE_ADDR'] ?? null);
         return $this->json($response, [
             'action' => $action,
             'debt' => $debtLink,
@@ -426,6 +431,37 @@ class ActionController
             ]);
             return \FinanceHub\Models\Debt::findUserDebt((int)$open['id'], $userId);
         });
+    }
+
+    /**
+     * POST /actions/parse-receipt — OCR a receipt image (base64) into a
+     * structured action. Requires an Anthropic key (Claude Vision).
+     */
+    public function parseReceipt(Request $request, Response $response): Response
+    {
+        $userId = (int)$request->getAttribute('user_id');
+        $data = $request->getParsedBody() ?: [];
+        $image = $data['image'] ?? null;
+        $mime = $data['mime_type'] ?? 'image/jpeg';
+        if (!is_string($image) || $image === '') {
+            return $this->json($response, ['error' => 'الصورة مطلوبة (base64)'], 422);
+        }
+        // strip data URL prefix if present
+        if (strpos($image, ',') !== false) {
+            $image = substr($image, strpos($image, ',') + 1);
+        }
+        if (!in_array($mime, ['image/jpeg', 'image/png', 'image/webp', 'image/gif'], true)) {
+            return $this->json($response, ['error' => 'نوع الصورة غير مدعوم'], 422);
+        }
+        if (strlen($image) > 8 * 1024 * 1024) {
+            return $this->json($response, ['error' => 'الصورة كبيرة جداً (الحد 6MB)'], 422);
+        }
+
+        $result = $this->ai->parseReceiptFromImage($userId, $image, $mime);
+        if (isset($result['error'])) {
+            return $this->json($response, $result, 422);
+        }
+        return $this->json($response, $result);
     }
 
     public function parseAi(Request $request, Response $response): Response

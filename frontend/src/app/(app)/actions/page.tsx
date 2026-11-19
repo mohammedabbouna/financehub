@@ -62,6 +62,9 @@ export default function ActionsPage() {
   const toast = useToast();
   const [showCreate, setShowCreate] = useState(false);
   const [showParse, setShowParse] = useState(false);
+  const [showReceipt, setShowReceipt] = useState(false);
+  const [receiptLoading, setReceiptLoading] = useState(false);
+  const [receiptError, setReceiptError] = useState<string | null>(null);
   const [editingAction, setEditingAction] = useState<Action | null>(null);
   const [editForm, setEditForm] = useState<{ category_id: string; description: string; date: string; tag: string }>({
     category_id: '',
@@ -134,6 +137,13 @@ export default function ActionsPage() {
   const categories = categoriesData?.categories || [];
   const actions = actionsData?.actions || [];
 
+  // Auto-select the first wallet when the list loads (so the user can submit immediately).
+  React.useEffect(() => {
+    if (!form.wallet_id && wallets.length > 0) {
+      setForm((f) => ({ ...f, wallet_id: String(wallets[0].id) }));
+    }
+  }, [wallets, form.wallet_id]);
+
   const fillFromParse = () => {
     if (!parseResult) return;
     setForm({
@@ -167,6 +177,9 @@ export default function ActionsPage() {
         <div className="flex gap-2">
           <button type="button" onClick={() => setShowParse(true)} className="btn-secondary">
             إدخال ذكي
+          </button>
+          <button type="button" onClick={() => setShowReceipt(true)} className="btn-secondary">
+            مسح إيصال
           </button>
           <button type="button" onClick={() => setShowCreate(true)} className="btn-primary">
             + عملية جديدة
@@ -236,6 +249,73 @@ export default function ActionsPage() {
         )}
       </Modal>
 
+      {/* Receipt OCR Modal */}
+      <Modal
+        open={showReceipt}
+        onClose={() => { setShowReceipt(false); setReceiptError(null); }}
+        title="مسح إيصال (OCR)"
+        footer={
+          <>
+            <button type="button" onClick={() => { setShowReceipt(false); setReceiptError(null); }} className="btn-secondary flex-1">
+              إلغاء
+            </button>
+          </>
+        }
+      >
+        <div className="space-y-4">
+          <p className="text-sm text-gray-400">يتطلب مفتاح Anthropic (Claude Vision). ارفع صورة الإيصال.</p>
+          {receiptError && (
+            <div className="rounded-lg border border-red-500/30 bg-red-500/10 px-3 py-2 text-sm text-red-400">{receiptError}</div>
+          )}
+          <input
+            type="file"
+            accept="image/*"
+            className="input"
+            onChange={async (e) => {
+              const file = e.target.files?.[0];
+              if (!file) return;
+              setReceiptLoading(true);
+              setReceiptError(null);
+              try {
+                const reader = new FileReader();
+                reader.onload = async () => {
+                  try {
+                    const dataUrl = String(reader.result);
+                    const mime = file.type || 'image/jpeg';
+                    const base64 = dataUrl.split(',')[1];
+                    const res = await api.parseReceiptAi(base64, mime);
+                    const pa = res.parsed_action;
+                    if (!pa) { setReceiptError(res.error || 'تعذر التحليل'); return; }
+                    setForm({
+                      type: pa.type || 'withdraw',
+                      wallet_id: pa.wallet_id != null ? String(pa.wallet_id) : '',
+                      target_wallet_id: '',
+                      amount: pa.amount != null ? String(pa.amount) : '',
+                      category_id: pa.category_id != null ? String(pa.category_id) : '',
+                      description: pa.description || '',
+                      date: pa.date || today(),
+                      tag: pa.tag || 'receipt',
+                    });
+                    setShowReceipt(false);
+                    setShowCreate(true);
+                  } catch (err) {
+                    setReceiptError(apiErrorMessage(err, 'تعذر تحليل الإيصال.'));
+                  } finally {
+                    setReceiptLoading(false);
+                  }
+                };
+                reader.readAsDataURL(file);
+              } catch (err) {
+                setReceiptError(apiErrorMessage(err, 'تعذر قراءة الملف.'));
+                setReceiptLoading(false);
+              }
+            }}
+            disabled={receiptLoading}
+          />
+          {receiptLoading && <Spinner label="جاري تحليل الإيصال..." />}
+        </div>
+      </Modal>
+
       {/* Create Modal */}
       <Modal
         open={showCreate}
@@ -248,8 +328,14 @@ export default function ActionsPage() {
             </button>
             <button
               type="button"
-              onClick={() => createMutation.mutate()}
-              disabled={!form.wallet_id || !form.amount || createMutation.isPending}
+              onClick={() => {
+                if (!form.wallet_id || !form.amount) {
+                  toast.error('يرجى اختيار المحفظة وإدخال المبلغ');
+                  return;
+                }
+                createMutation.mutate();
+              }}
+              disabled={createMutation.isPending}
               className="btn-primary flex-1"
             >
               {createMutation.isPending ? 'جاري...' : 'تسجيل العملية'}
@@ -519,7 +605,7 @@ export default function ActionsPage() {
               return (
                 <div
                   key={action.id}
-                  className="flex items-center gap-3 border-b border-white/[0.06] py-3 last:border-0 last:pb-0 first:pt-0"
+                  className="flex items-center gap-3 border-b border-gray-100/[0.06] py-3 last:border-0 last:pb-0 first:pt-0"
                 >
                   <span className="flex w-[18px] shrink-0 justify-center">
                     <Glyph name={action.category_icon || '💳'} size={16} className="text-gray-500" />

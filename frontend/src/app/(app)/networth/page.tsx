@@ -42,7 +42,7 @@ export default function NetWorthPage() {
             <CartesianGrid stroke="rgba(237,237,237,0.06)" vertical={false} />
             <XAxis dataKey="date" reversed tick={{ fontSize: 11, fill: '#85858b' }} tickLine={false} axisLine={{ stroke: 'rgba(237,237,237,0.08)' }} tickFormatter={(v: string) => formatShortDate(v).slice(3)} interval="preserveStartEnd" minTickGap={28} />
             <YAxis orientation="right" width={60} tick={{ fontSize: 11, fill: '#85858b' }} tickLine={false} axisLine={false} tickFormatter={(v: number) => formatCompact(v)} />
-            <Tooltip contentStyle={{ backgroundColor: '#26262a', border: '1px solid #34343a', borderRadius: '8px' }} formatter={(v: number | string) => [formatCurrency(Number(v), 0), 'صافي الثروة']} labelFormatter={(v: string) => formatShortDate(v)} />
+            <Tooltip contentStyle={{ backgroundColor: 'var(--bg-raised)', border: '1px solid var(--border-strong)', borderRadius: '8px' }} formatter={(v: number | string) => [formatCurrency(Number(v), 0), 'صافي الثروة']} labelFormatter={(v: string) => formatShortDate(v)} />
             <Area type="monotone" dataKey="balance" stroke="#3b82f6" strokeWidth={2} fill="url(#nwFill)" dot={false} activeDot={{ r: 3, strokeWidth: 0 }} />
           </AreaChart>
         </ResponsiveContainer>

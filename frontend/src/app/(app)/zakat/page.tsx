@@ -157,7 +157,7 @@ export default function ZakatPage() {
 
       {/* Snapshots history */}
       <div className="card p-0">
-        <div className="border-b border-white/[0.06] px-5 py-4">
+        <div className="border-b border-gray-100/[0.06] px-5 py-4">
           <h2 className="text-[15px] font-medium text-gray-100">اللقطات المحفوظة</h2>
         </div>
         {snapshots.isLoading ? (
@@ -170,7 +170,7 @@ export default function ZakatPage() {
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
-                <tr className="border-b border-white/[0.06] text-right text-xs font-normal text-gray-500">
+                <tr className="border-b border-gray-100/[0.06] text-right text-xs font-normal text-gray-500">
                   <th className="px-5 py-3">التاريخ</th>
                   <th className="px-5 py-3 text-left">النقد</th>
                   <th className="px-5 py-3 text-left">الذهب</th>
@@ -182,7 +182,7 @@ export default function ZakatPage() {
               </thead>
               <tbody>
                 {snapshots.data!.snapshots.map((s) => (
-                  <tr key={s.id} className="border-b border-white/[0.06] text-gray-100 last:border-0">
+                  <tr key={s.id} className="border-b border-gray-100/[0.06] text-gray-100 last:border-0">
                     <td className="px-5 py-3 font-mono">{formatShortDate(s.snapshot_date)}</td>
                     <td className="px-5 py-3 text-left tabular-nums">{formatCurrency(s.cash, 0)}</td>
                     <td className="px-5 py-3 text-left tabular-nums">{formatCurrency(s.gold_value, 0)}</td>

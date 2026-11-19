@@ -129,7 +129,7 @@ export default function CalendarPage() {
                 key={day.date}
                 aria-label={dayLabel(day)}
                 className={`min-h-[80px] w-full rounded-lg border p-2 text-right text-sm transition-colors ${
-                  day.is_today ? 'border-blue-500 bg-blue-500/10' : 'border-white/[0.06] hover:border-gray-600'
+                  day.is_today ? 'border-blue-500 bg-blue-500/10' : 'border-gray-100/[0.06] hover:border-gray-600'
                 }`}
               >
                 <span

@@ -158,8 +158,8 @@ export default function InsightsPage() {
                 />
                 <Tooltip
                   contentStyle={{
-                    backgroundColor: '#26262a',
-                    border: '1px solid #34343a',
+                    backgroundColor: 'var(--bg-raised)',
+                    border: '1px solid var(--border-strong)',
                     borderRadius: '8px',
                     boxShadow: 'none',
                   }}
@@ -192,7 +192,7 @@ export default function InsightsPage() {
             {insights.map((insight) => (
               <div
                 key={insight.id}
-                className="flex items-start gap-3 border-b border-white/[0.06] py-3 last:border-0"
+                className="flex items-start gap-3 border-b border-gray-100/[0.06] py-3 last:border-0"
               >
                 <span className="mt-0.5 flex w-[18px] shrink-0 justify-center">
                   <Glyph
@@ -239,7 +239,7 @@ export default function InsightsPage() {
               {anomalies.map((anomaly) => (
                 <div
                   key={anomaly.id}
-                  className={`flex items-center gap-3 border-b border-white/[0.06] py-3 last:border-0 ${
+                  className={`flex items-center gap-3 border-b border-gray-100/[0.06] py-3 last:border-0 ${
                     anomaly.severity === 'critical'
                       ? 'bg-red-500/5'
                       : anomaly.severity === 'high'

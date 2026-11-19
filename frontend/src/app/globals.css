@@ -4,6 +4,59 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Default theme: DARK. The gray ramp is driven by CSS variables so a
+   single class swap on <html> flips the whole UI between dark and light
+   without per-component edits (existing code uses bg-gray-900 for surfaces
+   and text-gray-100 for primary text in both modes). */
+:root {
+  --g-50: 245 244 242;
+  --g-100: 237 237 237;
+  --g-200: 215 214 211;
+  --g-300: 183 181 177;
+  --g-400: 161 161 166;
+  --g-500: 133 133 139;
+  --g-600: 110 110 115;
+  --g-700: 52 52 58;
+  --g-800: 38 38 42;
+  --g-900: 20 20 21;
+  --g-950: 15 15 16;
+}
+
+/* Light theme: invert the ramp. */
+html.light {
+  --g-50: 15 15 16;
+  --g-100: 20 20 21;
+  --g-200: 38 38 42;
+  --g-300: 52 52 58;
+  --g-400: 110 110 115;
+  --g-500: 133 133 139;
+  --g-600: 161 161 166;
+  --g-700: 183 181 177;
+  --g-800: 215 214 211;
+  --g-900: 245 244 242;
+  --g-950: 237 237 237;
+
+  /* Light surfaces */
+  --bg-deepest: #ffffff;
+  --bg-primary: #f5f4f2;
+  --bg-secondary: #ededed;
+  --bg-card: #ffffff;
+  --bg-raised: #f0efec;
+
+  /* Light text */
+  --text-primary: #141415;
+  --text-secondary: #34343a;
+  --text-muted: #6e6e73;
+
+  /* Hairlines */
+  --hairline: rgba(20, 20, 21, 0.08);
+  --border-color: #d7d6d3;
+  --border-strong: #b7b5b1;
+
+  /* Primary contrast flips */
+  --primary-contrast: #ededed;
+}
+
 :root {
   /* Brass accent — selection, links, the forecast line */
   --primary: #e0b463;

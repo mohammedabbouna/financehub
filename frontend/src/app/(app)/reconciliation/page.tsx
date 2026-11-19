@@ -197,7 +197,7 @@ export default function ReconciliationPage() {
                   </thead>
                   <tbody>
                     {rows.map((r) => (
-                      <tr key={r.id} className="border-t border-white/[0.04]">
+                      <tr key={r.id} className="border-t border-gray-100/[0.04]">
                         <td className="px-3 py-2 font-mono text-xs text-gray-400">{formatShortDate(r.row_date)}</td>
                         <td className="max-w-[200px] truncate px-3 py-2 text-gray-300">{r.description || '—'}</td>
                         <td className={`px-3 py-2 text-left tabular-nums ${r.direction === 'in' ? 'text-emerald-400' : 'text-rose-400'}`}>

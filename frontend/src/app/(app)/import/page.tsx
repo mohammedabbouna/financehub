@@ -262,7 +262,7 @@ export default function ImportPage() {
               </button>
             </div>
 
-            <div className="max-h-[420px] overflow-auto rounded-lg border border-white/[0.06]">
+            <div className="max-h-[420px] overflow-auto rounded-lg border border-gray-100/[0.06]">
               <table className="w-full text-sm">
                 <thead className="sticky top-0 bg-gray-900 text-xs text-gray-500">
                   <tr>
@@ -276,7 +276,7 @@ export default function ImportPage() {
                 </thead>
                 <tbody>
                   {mapped.map((r) => (
-                    <tr key={r.row} className="border-t border-white/[0.04]">
+                    <tr key={r.row} className="border-t border-gray-100/[0.04]">
                       <td className="px-3 py-2 font-mono text-xs text-gray-400">{formatShortDate(r.date)}</td>
                       <td className="px-3 py-2 text-gray-300">{TYPE_LABELS[r.type]}</td>
                       <td className="px-3 py-2 text-left tabular-nums text-gray-200">

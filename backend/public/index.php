@@ -15,7 +15,11 @@ use FinanceHub\Controllers\AIChatController;
 use FinanceHub\Controllers\HealthController;
 use FinanceHub\Controllers\InvestmentController;
 use FinanceHub\Controllers\CalendarController;
+use FinanceHub\Controllers\AuditController;
 use FinanceHub\Controllers\BillController;
+use FinanceHub\Controllers\ClientController;
+use FinanceHub\Controllers\InvoiceController;
+use FinanceHub\Controllers\AnnualReportController;
 use FinanceHub\Controllers\AnomalyController;
 use FinanceHub\Controllers\ForecastController;
 use FinanceHub\Controllers\InsightController;
@@ -237,6 +241,13 @@ $app->get('/api/v1/auth/ai-models', function ($request, $response) use ($authCon
     return $authController->listAiModels($request, $response);
 })->add(new AuthMiddleware());
 
+$app->get('/api/v1/auth/business-mode', function ($request, $response) use ($authController) {
+    return $authController->getBusinessMode($request, $response);
+})->add(new AuthMiddleware());
+$app->put('/api/v1/auth/business-mode', function ($request, $response) use ($authController) {
+    return $authController->setBusinessMode($request, $response);
+})->add(new AuthMiddleware());
+
 // 2FA management (protected)
 $app->post('/api/v1/auth/2fa/setup', function ($request, $response) use ($authController) {
     return $authController->setup2fa($request, $response);
@@ -282,6 +293,22 @@ $app->group('/api/v1', function ($group) use ($aiRateLimit, $aiDailyLimit) {
     $group->post('/reconciliation/{id}/create-action', [ReconciliationController::class, 'createAction']);
     $group->post('/reconciliation/{id}/complete', [ReconciliationController::class, 'complete']);
     $group->delete('/reconciliation/{id}', [ReconciliationController::class, 'delete']);
+
+    // Clients & invoices (business mode)
+    $group->get('/clients', [ClientController::class, 'index']);
+    $group->post('/clients', [ClientController::class, 'create']);
+    $group->get('/clients/{id}', [ClientController::class, 'show']);
+    $group->put('/clients/{id}', [ClientController::class, 'update']);
+    $group->delete('/clients/{id}', [ClientController::class, 'delete']);
+
+    $group->get('/invoices', [InvoiceController::class, 'index']);
+    $group->post('/invoices', [InvoiceController::class, 'create']);
+    $group->get('/invoices/{id}', [InvoiceController::class, 'show']);
+    $group->patch('/invoices/{id}/status', [InvoiceController::class, 'updateStatus']);
+    $group->delete('/invoices/{id}', [InvoiceController::class, 'delete']);
+
+    // Audit log
+    $group->get('/audit', [AuditController::class, 'index']);
     $group->post('/contacts', [ContactController::class, 'create']);
     $group->get('/contacts/{id}', [ContactController::class, 'show']);
     $group->put('/contacts/{id}', [ContactController::class, 'update']);
@@ -346,6 +373,7 @@ $app->group('/api/v1', function ($group) use ($aiRateLimit, $aiDailyLimit) {
     $group->get('/actions/{id}', [ActionController::class, 'show']);
     $group->put('/actions/{id}', [ActionController::class, 'update']);
     $group->post('/actions/parse-ai', [ActionController::class, 'parseAi'])->add($aiRateLimit)->add($aiDailyLimit);
+    $group->post('/actions/parse-receipt', [ActionController::class, 'parseReceipt'])->add($aiRateLimit)->add($aiDailyLimit);
 
     // Transfers
     $group->post('/transfers', [TransferController::class, 'create']);
@@ -376,6 +404,9 @@ $app->group('/api/v1', function ($group) use ($aiRateLimit, $aiDailyLimit) {
     $group->post('/ai/chat', [AIChatController::class, 'chat'])->add($aiRateLimit)->add($aiDailyLimit);
     $group->get('/ai/chat/history', [AIChatController::class, 'history']);
     $group->delete('/ai/chat/history', [AIChatController::class, 'clearHistory']);
+
+    // Annual tax report (Algeria IRG) — must come before /reports/{year}/{month}
+    $group->get('/reports/annual/{year}', [AnnualReportController::class, 'annual']);
 
     // Monthly report (التقرير الشهري)
     $group->get('/reports/{year}/{month}', [ReportController::class, 'monthly'])

@@ -30,3 +30,11 @@ nginx/ssl/*.key
 # OS
 .DS_Store
 Thumbs.db
+
+# iOS build artifacts
+ios/.build/
+*.xcuserstate
+ios/DerivedData/
+
+# TypeScript build info
+frontend/tsconfig.tsbuildinfo

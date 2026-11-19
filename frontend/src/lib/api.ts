@@ -169,6 +169,11 @@ class ApiClient {
     return res.data;
   }
 
+  async parseReceiptAi(image: string, mime_type: string) {
+    const res = await this.client.post('/actions/parse-receipt', { image, mime_type });
+    return res.data;
+  }
+
   // Transfers
   async createTransfer(data: { from_wallet_id: number; to_wallet_id: number; amount: number; description?: string; date?: string }) {
     const res = await this.client.post('/transfers', data);
@@ -240,6 +245,11 @@ class ApiClient {
     return res.data;
   }
 
+  async getAnnualReport(year: number): Promise<any> {
+    const res = await this.client.get(`/reports/annual/${year}`);
+    return res.data;
+  }
+
   // Net worth (صافي الثروة — تجميع يومي تراكمي)
   async getNetWorth(from?: string, to?: string): Promise<NetWorth> {
     const res = await this.client.get('/networth', { params: { from, to } });
@@ -286,6 +296,27 @@ class ApiClient {
     const res = await this.client.get('/auth/ai-models');
     return res.data;
   }
+
+  // Audit log
+  async getAuditLog() {
+    const res = await this.client.get('/audit');
+    return res.data;
+  }
+
+  // Clients & invoices (business mode)
+  async getClients() { const res = await this.client.get('/clients'); return res.data; }
+  async createClient(data: any) { const res = await this.client.post('/clients', data); return res.data; }
+  async updateClient(id: number, data: any) { const res = await this.client.put(`/clients/${id}`, data); return res.data; }
+  async deleteClient(id: number) { const res = await this.client.delete(`/clients/${id}`); return res.data; }
+
+  async getInvoices(status?: string) { const res = await this.client.get('/invoices', { params: status ? { status } : undefined }); return res.data; }
+  async getInvoice(id: number) { const res = await this.client.get(`/invoices/${id}`); return res.data; }
+  async createInvoice(data: any) { const res = await this.client.post('/invoices', data); return res.data; }
+  async updateInvoiceStatus(id: number, status: string) { const res = await this.client.patch(`/invoices/${id}/status`, { status }); return res.data; }
+  async deleteInvoice(id: number) { const res = await this.client.delete(`/invoices/${id}`); return res.data; }
+
+  async getBusinessMode() { const res = await this.client.get('/auth/business-mode'); return res.data; }
+  async setBusinessMode(enabled: boolean) { const res = await this.client.put('/auth/business-mode', { enabled }); return res.data; }
 
   async setAiKey(payload: { api_key?: string | null; provider?: string; base_url?: string | null; model?: string | null; clear_key?: boolean }): Promise<{ message: string; has_key: boolean; masked: string | null; source: string; provider: string; base_url: string | null; model: string | null }> {
     const res = await this.client.put('/auth/ai-key', payload);

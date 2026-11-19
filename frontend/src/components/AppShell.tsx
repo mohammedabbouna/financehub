@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { useAuth } from '@/lib/auth';
 import { api } from '@/lib/api';
 import { hydratePrivacy, subscribePrivacy, isPrivacyHidden } from '@/lib/privacy';
+import { hydrateTheme } from '@/lib/theme';
 import Sidebar from '@/components/ui/Sidebar';
 import CommandPalette from '@/components/CommandPalette';
 import Onboarding from '@/components/Onboarding';
@@ -44,6 +45,7 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
   const privacyHidden = useSyncExternalStore(subscribePrivacy, isPrivacyHidden, () => false);
   useEffect(() => {
     hydratePrivacy();
+    hydrateTheme();
   }, []);
 
   useEffect(() => {

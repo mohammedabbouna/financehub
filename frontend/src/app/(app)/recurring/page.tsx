@@ -452,7 +452,7 @@ export default function RecurringPage() {
               return (
                 <div
                   key={row.id}
-                  className={`flex flex-wrap items-center gap-3 border-b border-white/[0.06] py-3 last:border-0 last:pb-0 first:pt-0 ${
+                  className={`flex flex-wrap items-center gap-3 border-b border-gray-100/[0.06] py-3 last:border-0 last:pb-0 first:pt-0 ${
                     isActive ? '' : 'opacity-60'
                   }`}
                 >

@@ -92,7 +92,7 @@ export default function RegisterPage() {
             className="btn-primary w-full flex items-center justify-center gap-2"
           >
             {loading ? (
-              <span className="inline-block w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+              <span className="inline-block w-4 h-4 border-2 border-gray-100/30 border-t-white rounded-full animate-spin" />
             ) : null}
             {loading ? 'جاري إنشاء الحساب...' : 'إنشاء الحساب'}
           </button>

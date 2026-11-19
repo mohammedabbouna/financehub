@@ -164,7 +164,7 @@ export default function AIChatPage() {
 
                 {/* Structured affordability verdict («هل أ semiclass؟») */}
                 {msg.role === 'assistant' && msg.analysis && (
-                  <div className="mb-3 rounded-xl border border-white/[0.06] bg-gray-900/70 p-3">
+                  <div className="mb-3 rounded-xl border border-gray-100/[0.06] bg-gray-900/70 p-3">
                     <div className="flex items-center justify-between gap-3">
                       <span className="text-xs text-gray-400">نتيجة التحليل</span>
                       <span
@@ -209,7 +209,7 @@ export default function AIChatPage() {
         )}
 
         {/* Input */}
-        <form onSubmit={handleSend} className="flex gap-3 border-t border-white/[0.06] p-4">
+        <form onSubmit={handleSend} className="flex gap-3 border-t border-gray-100/[0.06] p-4">
           <label htmlFor="chat-input" className="sr-only">
             اكتب سؤالك
           </label>

@@ -7,8 +7,9 @@ import { api, apiErrorMessage } from '@/lib/api';
 import { useToast } from '@/components/ui/Toast';
 import Glyph from '@/components/ui/Glyph';
 import { formatCurrency, formatShortDate } from '@/lib/format';
-import { NAV_ITEMS } from '@/components/ui/Sidebar';
 import { OPEN_COMMAND_EVENT } from '@/lib/events';
+import { NAV_ITEMS } from '@/components/ui/Sidebar';
+import { useVoiceInput } from '@/lib/voice';
 import type { Action, ParsedAction } from '@/types';
 
 const TYPE_META: Record<string, { label: string; icon: string }> = {
@@ -48,8 +49,14 @@ export default function CommandPalette() {
   const [parseError, setParseError] = useState<string | null>(null);
   const [selectedIndex, setSelectedIndex] = useState(0);
 
+  const voice = useVoiceInput('ar-DZ');
+
   /** Monotonic sequence so stale parse responses are discarded. */
   const parseSeq = useRef(0);
+
+  useEffect(() => {
+    if (voice.transcript) setQuery(voice.transcript);
+  }, [voice.transcript]);
 
   const close = useCallback(() => {
     setOpen(false);
@@ -231,7 +238,7 @@ export default function CommandPalette() {
         if (e.target === e.currentTarget) close();
       }}
     >
-      <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" aria-hidden="true" />
+      <div className="absolute inset-0 bg-gray-950/60 backdrop-blur-sm" aria-hidden="true" />
 
       <div
         role="dialog"
@@ -252,6 +259,17 @@ export default function CommandPalette() {
             aria-label="الإدخال السريع"
             aria-controls="command-results"
           />
+          {voice.supported && (
+            <button
+              type="button"
+              onClick={() => (voice.listening ? voice.stop() : voice.start())}
+              className={`shrink-0 rounded-lg p-1.5 text-sm transition-colors ${voice.listening ? 'bg-red-500/20 text-red-400' : 'text-gray-500 hover:text-gray-200'}`}
+              title={voice.listening ? 'إيقاف' : 'إدخال صوتي'}
+              aria-label="إدخال صوتي"
+            >
+              {voice.listening ? '⏹' : '🎤'}
+            </button>
+          )}
           {parseLoading && <span className="text-xs text-gray-500">جاري التحليل…</span>}
           <kbd className="kbd hidden sm:inline-flex">Esc</kbd>
         </div>

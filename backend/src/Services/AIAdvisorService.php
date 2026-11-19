@@ -130,9 +130,21 @@ class AIAdvisorService
 
         // No API key → deterministic local parser keeps the feature usable.
         if (empty($this->apiKey) || $this->apiKey === 'sk-ant-dummy') {
+            $localResult = $this->localParseAction($text, $wallets, $categories, $contacts, $lastUsed, $relativeDate);
+            // Apply learned preference (overrides category if a strong match exists).
+            $prefCatId = \FinanceHub\Models\CategoryPreference::findForText($userId, $text);
+            if ($prefCatId !== null) {
+                $localResult['category_id'] = $prefCatId;
+                foreach ($categories as $c) {
+                    if ((int)$c['id'] === $prefCatId) {
+                        $localResult['category_name'] = $c['name'];
+                        break;
+                    }
+                }
+            }
             return $this->normalizeParsedAction(
                 $userId,
-                $this->localParseAction($text, $wallets, $categories, $contacts, $lastUsed, $relativeDate),
+                $localResult,
                 $wallets,
                 $categories,
                 $contacts,
@@ -767,6 +779,85 @@ class AIAdvisorService
             'contact_name' => $contactName,
             'confidence' => $confidence,
         ];
+    }
+
+    /**
+     * Parse a receipt image (base64) into a structured action using
+     * Claude Vision (Anthropic) — other providers fall back to a helpful
+     * message since vision support varies.
+     */
+    public function parseReceiptFromImage(int $userId, string $base64, string $mimeType): array
+    {
+        $this->forUser($userId);
+        if (empty($this->apiKey) || $this->provider !== 'anthropic') {
+            return [
+                'parsed_action' => null,
+                'error' => 'OCR يتطلب مفتاح Anthropic (Claude Vision). اضبط المفتاح في الإعدادات.',
+                'note' => 'vision requires anthropic key',
+            ];
+        }
+        $categories = Category::findAllByUser($userId);
+        $wallets = Wallet::findAllByUser($userId);
+        $catNames = array_map(static fn (array $c): string => $c['name'], $categories);
+
+        $url = 'https://api.anthropic.com/v1/messages';
+        $payload = [
+            'model' => $this->model,
+            'max_tokens' => 1024,
+            'messages' => [[
+                'role' => 'user',
+                'content' => [
+                    ['type' => 'image', 'source' => ['type' => 'base64', 'media_type' => $mimeType, 'data' => $base64]],
+                    ['type' => 'text', 'text' => 'استخرج من هذا الإيصال: المبلغ، التاريخ (YYYY-MM-DD)، الوصف، والفئة (من: ' . implode(', ', $catNames) . '). أعد JSON فقط: {"amount": number, "date": "YYYY-MM-DD", "description": string, "category_name": string|null, "confidence": 0..1}'],
+                ],
+            ]],
+        ];
+        $ch = curl_init($url);
+        curl_setopt_array($ch, [
+            CURLOPT_POST => true,
+            CURLOPT_HTTPHEADER => [
+                'Content-Type: application/json',
+                'x-api-key: ' . $this->apiKey,
+                'anthropic-version: 2023-06-01',
+            ],
+            CURLOPT_POSTFIELDS => json_encode($payload),
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_TIMEOUT => 60,
+        ]);
+        $response = curl_exec($ch);
+        $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        curl_close($ch);
+        if ($httpCode !== 200) {
+            return ['parsed_action' => null, 'error' => 'تعذر تحليل الإيصال (HTTP ' . $httpCode . ')', 'note' => 'vision failed'];
+        }
+        $result = json_decode((string)$response, true);
+        $content = $result['content'][0]['text'] ?? '';
+        $json = $this->extractJson($content);
+        if ($json === null) {
+            return ['parsed_action' => null, 'error' => 'تعذر استخراج البيانات', 'raw' => $content];
+        }
+        // resolve category_id
+        $categoryId = null;
+        if (!empty($json['category_name'])) {
+            foreach ($categories as $c) {
+                if (mb_strtolower($c['name']) === mb_strtolower($json['category_name'])) {
+                    $categoryId = (int)$c['id']; break;
+                }
+            }
+        }
+        $parsed = [
+            'type' => 'withdraw',
+            'amount' => isset($json['amount']) ? (float)$json['amount'] : null,
+            'category_id' => $categoryId,
+            'category_name' => $json['category_name'] ?? null,
+            'wallet_id' => $wallets[0]['id'] ?? null,
+            'wallet_name' => $wallets[0]['name'] ?? null,
+            'description' => $json['description'] ?? 'إيصال',
+            'date' => $json['date'] ?? date('Y-m-d'),
+            'tag' => 'receipt',
+            'confidence' => (float)($json['confidence'] ?? 0.7),
+        ];
+        return ['parsed_action' => $parsed, 'ai_used' => true];
     }
 
     /**

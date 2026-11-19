@@ -6,6 +6,7 @@ import { usePathname } from 'next/navigation';
 import { Landmark, LogOut, Eye, EyeOff, ChevronDown } from 'lucide-react';
 import { useAuth } from '@/lib/auth';
 import { togglePrivacy, subscribePrivacy, isPrivacyHidden } from '@/lib/privacy';
+import { toggleTheme, subscribeTheme, getTheme } from '@/lib/theme';
 import { OPEN_COMMAND_EVENT } from '@/lib/events';
 import NotificationsBell from '@/components/NotificationsBell';
 import Glyph from '@/components/ui/Glyph';
@@ -65,10 +66,20 @@ export const NAV_GROUPS: NavGroup[] = [
     items: [
       { href: '/insights', label: 'الرؤى والتقارير', icon: '💡' },
       { href: '/reports', label: 'التقرير الشهري', icon: '📄' },
+      { href: '/reports/annual', label: 'التقرير السنوي (ضريبة)', icon: '📊' },
       { href: '/import', label: 'الاستيراد والتصدير', icon: '📥' },
       { href: '/reconciliation', label: 'مطابقة كشف الحساب', icon: '🔄' },
       { href: '/smart-rules', label: 'القواعد الذكية', icon: '⚙️' },
       { href: '/categories', label: 'الفئات', icon: '🗂️' },
+      { href: '/audit', label: 'سجل التدقيق', icon: '📜' },
+    ],
+  },
+  {
+    title: 'الأعمال',
+    items: [
+      { href: '/clients', label: 'العملاء', icon: '👥' },
+      { href: '/invoices', label: 'الفواتير (Invoices)', icon: '🧾' },
+      { href: '/profit-loss', label: 'الأرباح والخسائر', icon: '📊' },
     ],
   },
 ];
@@ -81,6 +92,7 @@ export default function Sidebar() {
   const { user, logout } = useAuth();
   const [isMac, setIsMac] = useState(false);
   const privacyHidden = useSyncExternalStore(subscribePrivacy, isPrivacyHidden, () => false);
+  const theme = useSyncExternalStore(subscribeTheme, getTheme, () => 'dark');
   const [openGroups, setOpenGroups] = useState<Record<string, boolean>>(() => {
     const init: Record<string, boolean> = {};
     NAV_GROUPS.forEach((g) => (init[g.title] = true));
@@ -173,6 +185,17 @@ export default function Sidebar() {
           <span className="flex-1 truncate text-right">الإعدادات</span>
         </Link>
 
+        <button
+          type="button"
+          onClick={toggleTheme}
+          className="mb-1 flex w-full items-center gap-2 rounded-lg px-2 py-1.5 text-sm text-gray-500 transition-colors hover:text-gray-200"
+          title={theme === 'dark' ? 'الوضع النهاري' : 'الوضع الليلي'}
+        >
+          <span className="flex w-[18px] shrink-0 justify-center">
+            {theme === 'dark' ? '☀️' : '🌙'}
+          </span>
+          <span className="flex-1 text-right">{theme === 'dark' ? 'الوضع النهاري' : 'الوضع الليلي'}</span>
+        </button>
         <button
           type="button"
           onClick={togglePrivacy}

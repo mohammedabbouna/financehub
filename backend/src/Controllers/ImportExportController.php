@@ -142,7 +142,7 @@ class ImportExportController
                 }
             }
 
-            $categoryId = $this->matchCategory($categories, (string)($row['category'] ?? ''), $lower);
+            $categoryId = $this->matchCategory($categories, (string)($row['category'] ?? ''), $lower, $userId);
             $warnings = [];
             if (!$dateOk) {
                 $warnings[] = 'تاريخ غير صالح — سيُستبدل بيوم التحليل';
@@ -297,8 +297,16 @@ class ImportExportController
      *
      * @param array<int, array> $categories
      */
-    private function matchCategory(array $categories, string $label, string $lowerText): ?int
+    private function matchCategory(array $categories, string $label, string $lowerText, int $userId = 0): ?int
     {
+        if ($userId > 0) {
+            $pref = \FinanceHub\Models\CategoryPreference::findForText($userId, $lowerText);
+            if ($pref !== null) {
+                foreach ($categories as $c) {
+                    if ((int)$c['id'] === $pref) return $pref;
+                }
+            }
+        }
         $label = trim($label);
         if ($label !== '') {
             foreach ($categories as $c) {

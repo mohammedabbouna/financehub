@@ -259,6 +259,21 @@ class AuthController
         return $this->json($response, ['message' => 'تم تعطيل المصادقة الثنائية']);
     }
 
+    public function getBusinessMode(Request $request, Response $response): Response
+    {
+        $userId = (int)$request->getAttribute('user_id');
+        return $this->json($response, ['business_mode' => User::isBusinessMode($userId)]);
+    }
+
+    public function setBusinessMode(Request $request, Response $response): Response
+    {
+        $userId = (int)$request->getAttribute('user_id');
+        $data = $request->getParsedBody() ?: [];
+        $enabled = !empty($data['enabled']);
+        User::setBusinessMode($userId, $enabled);
+        return $this->json($response, ['message' => 'تم تحديث وضع الأعمال', 'business_mode' => $enabled]);
+    }
+
     public function me(Request $request, Response $response): Response
     {
         $userId = $request->getAttribute('user_id');

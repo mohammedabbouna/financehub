@@ -1,0 +1,54 @@
+name: FinanceHub
+options:
+  bundleIdPrefix: com.financehub
+  deploymentTarget:
+    iOS: "17.0"
+  xcodeVersion: "15.0"
+  createIntermediateGroups: true
+
+packages:
+  FinanceHubCore:
+    path: .
+
+targets:
+  FinanceHub:
+    type: application
+    platform: iOS
+    deploymentTarget: "17.0"
+    sources:
+      - path: App
+    dependencies:
+      - package: FinanceHubCore
+        product: FinanceHubCore
+      - package: FinanceHubCore
+        product: FinanceHubUI
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.financehub.ios
+        SWIFT_VERSION: "6.0"
+        GENERATE_INFOPLIST_FILE: YES
+        INFOPLIST_KEY_CFBundleDisplayName: FinanceHub
+        INFOPLIST_KEY_UILaunchScreen_Generation: YES
+        INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone: "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight"
+        INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad: "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight"
+        TARGETED_DEVICE_FAMILY: "1,2"
+        # Dev-only: allow HTTP to localhost API
+        INFOPLIST_KEY_NSAppTransportSecurity_NSAllowsArbitraryLoads: YES
+    scheme:
+      testTargets:
+        - FinanceHubTests
+
+  FinanceHubTests:
+    type: bundle.unit-test
+    platform: iOS
+    deploymentTarget: "17.0"
+    sources:
+      - path: Tests/FinanceHubCoreTests
+    dependencies:
+      - target: FinanceHub
+      - package: FinanceHubCore
+        product: FinanceHubCore
+    settings:
+      base:
+        SWIFT_VERSION: "6.0"
+        GENERATE_INFOPLIST_FILE: YES

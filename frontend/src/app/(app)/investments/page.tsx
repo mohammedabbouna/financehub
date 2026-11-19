@@ -301,7 +301,7 @@ export default function InvestmentsPage() {
                 investments.map((inv) => (
                   <div
                     key={inv.id}
-                    className="flex items-center gap-3 border-b border-white/[0.06] py-3 last:border-0 last:pb-0 first:pt-0"
+                    className="flex items-center gap-3 border-b border-gray-100/[0.06] py-3 last:border-0 last:pb-0 first:pt-0"
                   >
                     <span className="flex w-[18px] shrink-0 justify-center">
                       <Glyph

@@ -217,7 +217,7 @@ export default function BillsPage() {
                   {upcoming.map((bill) => (
                     <div
                       key={bill.id}
-                      className="flex items-center gap-3 border-b border-white/[0.06] py-3 last:border-0 last:pb-0 first:pt-0"
+                      className="flex items-center gap-3 border-b border-gray-100/[0.06] py-3 last:border-0 last:pb-0 first:pt-0"
                     >
                       <span className="flex w-[18px] shrink-0 justify-center">
                         <Glyph name={bill.category_icon || '🧾'} size={16} className="text-gray-500" />
@@ -246,7 +246,7 @@ export default function BillsPage() {
                 bills.map((bill) => (
                   <div
                     key={bill.id}
-                    className="flex items-center gap-3 border-b border-white/[0.06] py-3 last:border-0 last:pb-0 first:pt-0"
+                    className="flex items-center gap-3 border-b border-gray-100/[0.06] py-3 last:border-0 last:pb-0 first:pt-0"
                   >
                     <span className="flex w-[18px] shrink-0 justify-center">
                       <Glyph name={bill.category_icon || '🧾'} size={16} className="text-gray-500" />

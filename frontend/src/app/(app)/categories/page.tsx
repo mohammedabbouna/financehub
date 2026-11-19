@@ -113,7 +113,7 @@ export default function CategoriesPage() {
             <h2 className="mb-4 text-[15px] font-medium text-gray-100">{t.icon} {t.label}</h2>
             <div className="space-y-3">
               {grouped(t.value).map(({ main, subs }) => (
-                <div key={main.id} className="rounded-lg border border-white/[0.06] bg-gray-900/40 p-3">
+                <div key={main.id} className="rounded-lg border border-gray-100/[0.06] bg-gray-900/40 p-3">
                   <div className="flex items-center justify-between gap-2">
                     <div className="flex items-center gap-2">
                       <Glyph name={main.icon || '📁'} size={16} className="text-gray-500" />
@@ -128,7 +128,7 @@ export default function CategoriesPage() {
                     )}
                   </div>
                   {subs.length > 0 && (
-                    <ul className="mt-2 space-y-1 border-r-2 border-white/[0.06] pr-3">
+                    <ul className="mt-2 space-y-1 border-r-2 border-gray-100/[0.06] pr-3">
                       {subs.map((s) => (
                         <li key={s.id} className="flex items-center justify-between gap-2 text-sm">
                           <div className="flex items-center gap-2 text-gray-300">
@@ -148,7 +148,7 @@ export default function CategoriesPage() {
                 </div>
               ))}
               {orphans(t.value).map((o) => (
-                <div key={o.id} className="rounded-lg border border-white/[0.06] bg-gray-900/40 p-3">
+                <div key={o.id} className="rounded-lg border border-gray-100/[0.06] bg-gray-900/40 p-3">
                   <div className="flex items-center justify-between gap-2">
                     <div className="flex items-center gap-2">
                       <Glyph name={o.icon || '📁'} size={16} className="text-gray-500" />

@@ -609,7 +609,7 @@ export default function ContactsPage() {
             {filteredContacts.map((contact) => (
               <div
                 key={contact.id}
-                className="flex flex-wrap items-center gap-3 border-b border-white/[0.06] py-3 last:border-0 last:pb-0 first:pt-0"
+                className="flex flex-wrap items-center gap-3 border-b border-gray-100/[0.06] py-3 last:border-0 last:pb-0 first:pt-0"
               >
                 <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-gray-700 bg-gray-800 font-medium text-gray-300">
                   {contact.name.charAt(0)}
@@ -938,7 +938,7 @@ export default function ContactsPage() {
                   <span dir="ltr">{formatCurrency(Number(paymentDebt.paid_amount))}</span>
                 </span>
               </div>
-              <div className="flex justify-between border-t border-white/[0.06] pt-1">
+              <div className="flex justify-between border-t border-gray-100/[0.06] pt-1">
                 <span className="text-gray-400">المتبقي</span>
                 <span className="font-medium tabular-nums text-amber-400">
                   <span dir="ltr">{formatCurrency(paymentRemaining)}</span>
@@ -1049,7 +1049,7 @@ export default function ContactsPage() {
             {paymentsQuery.data!.payments.map((payment) => (
               <div
                 key={payment.id}
-                className="flex items-center gap-3 border-b border-white/[0.06] py-3 last:border-0 last:pb-0 first:pt-0"
+                className="flex items-center gap-3 border-b border-gray-100/[0.06] py-3 last:border-0 last:pb-0 first:pt-0"
               >
                 <span className="flex w-[18px] shrink-0 justify-center text-gray-500" aria-hidden="true">
                   <Glyph name="💵" size={16} />

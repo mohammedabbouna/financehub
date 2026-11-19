@@ -55,13 +55,13 @@ export default function GoldPage() {
     <div className="space-y-6">
       <div className="flex items-start justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-white">🥇 الذهب</h1>
+          <h1 className="text-2xl font-bold text-gray-100">🥇 الذهب</h1>
           <p className="mt-1 text-sm text-gray-400">سعر الذهب اليوم بالدينار الجزائري + حصصك وخطة الادخار.</p>
         </div>
         <button
           onClick={() => refresh.mutate()}
           disabled={refresh.isPending}
-          className="rounded-lg bg-amber-600 px-4 py-2 text-sm font-medium text-white hover:bg-amber-500 disabled:opacity-50"
+          className="rounded-lg bg-amber-600 px-4 py-2 text-sm font-medium text-gray-100 hover:bg-amber-500 disabled:opacity-50"
         >
           {refresh.isPending ? 'جاري التحديث...' : '🔄 تحديث السعر'}
         </button>
@@ -91,7 +91,7 @@ export default function GoldPage() {
       <div className="grid gap-4 sm:grid-cols-3">
         <div className="rounded-xl border border-gray-700 bg-gray-800/50 p-4">
           <p className="text-sm text-gray-400">الكمية الحالية</p>
-          <p className="mt-1 text-2xl font-semibold text-white">{formatNumber(summary?.total_grams ?? 0, 2)} غ</p>
+          <p className="mt-1 text-2xl font-semibold text-gray-100">{formatNumber(summary?.total_grams ?? 0, 2)} غ</p>
         </div>
         <div className="rounded-xl border border-gray-700 bg-gray-800/50 p-4">
           <p className="text-sm text-gray-400">القيمة الآن</p>
@@ -112,7 +112,7 @@ export default function GoldPage() {
       {/* Holdings table */}
       <div className="rounded-xl border border-gray-700 bg-gray-800/50">
         <div className="border-b border-gray-700 px-5 py-4">
-          <h2 className="font-semibold text-white">📋 حصص الذهب</h2>
+          <h2 className="font-semibold text-gray-100">📋 حصص الذهب</h2>
         </div>
         {!data || data.holdings.length === 0 ? (
           <p className="px-5 py-8 text-center text-sm text-gray-500">
@@ -133,7 +133,7 @@ export default function GoldPage() {
               <tbody>
                 {data.holdings.map((h) => (
                   <tr key={h.id} className="border-b border-gray-700/50 text-gray-300">
-                    <td className="px-5 py-3 text-white">{h.name}</td>
+                    <td className="px-5 py-3 text-gray-100">{h.name}</td>
                     <td className="px-5 py-3">{formatNumber(h.grams, 2)}</td>
                     <td className="px-5 py-3">{formatCurrency(h.purchase_price)}</td>
                     <td className="px-5 py-3">{formatCurrency(h.value_now)}</td>
@@ -151,18 +151,18 @@ export default function GoldPage() {
       {/* Savings plan */}
       {plan && (
         <div className="rounded-xl border border-blue-500/30 bg-blue-500/10 p-5">
-          <h2 className="font-semibold text-white">🎯 خطة الادخار نحو {formatNumber(plan.target_grams, 0)}غ</h2>
+          <h2 className="font-semibold text-gray-100">🎯 خطة الادخار نحو {formatNumber(plan.target_grams, 0)}غ</h2>
           {plan.missing_grams <= 0 ? (
             <p className="mt-2 text-sm text-emerald-400">✓ بلغت هدف الوزن — ما عليك إلا المحافظة عليه.</p>
           ) : (
             <div className="mt-3 grid gap-3 text-sm sm:grid-cols-3">
               <div>
                 <p className="text-gray-400">المتبقي</p>
-                <p className="text-lg font-semibold text-white">{formatNumber(plan.missing_grams, 2)} غ</p>
+                <p className="text-lg font-semibold text-gray-100">{formatNumber(plan.missing_grams, 2)} غ</p>
               </div>
               <div>
                 <p className="text-gray-400">إجمالي المطلوب</p>
-                <p className="text-lg font-semibold text-white">
+                <p className="text-lg font-semibold text-gray-100">
                   {plan.total_to_save !== null ? formatCurrency(plan.total_to_save) : '—'}
                 </p>
               </div>

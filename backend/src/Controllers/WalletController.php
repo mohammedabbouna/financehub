@@ -61,6 +61,7 @@ class WalletController
         ]);
 
         $wallet = Wallet::findById($id);
+        \FinanceHub\Models\AuditLog::record($userId, 'create', 'wallet', $id, ['name' => $data['name'] ?? null], $request->getServerParams()['REMOTE_ADDR'] ?? null);
         return $this->json($response, ['wallet' => $wallet, 'message' => 'تم إنشاء المحفظة بنجاح'], 201);
     }
 

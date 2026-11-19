@@ -433,8 +433,8 @@ export default function DashboardPage() {
                   />
                   <Tooltip
                     contentStyle={{
-                      backgroundColor: '#26262a',
-                      border: '1px solid #34343a',
+                      backgroundColor: 'var(--bg-raised)',
+                      border: '1px solid var(--border-strong)',
                       borderRadius: '8px',
                       boxShadow: 'none',
                     }}
@@ -455,7 +455,7 @@ export default function DashboardPage() {
                 </AreaChart>
               </ResponsiveContainer>
             </div>
-            <p className="mt-3 border-t border-white/[0.06] pt-3 text-xs text-gray-500">
+            <p className="mt-3 border-t border-gray-100/[0.06] pt-3 text-xs text-gray-500">
               من <span className="font-mono tabular-nums text-gray-400">{formatCurrency(forecastSample[0].projected_balance, 0)}</span>{' '}
               في {formatDate(forecastSample[0].date)} إلى{' '}
               <span className="font-mono tabular-nums text-gray-400">
@@ -519,8 +519,8 @@ export default function DashboardPage() {
                 />
                 <Tooltip
                   contentStyle={{
-                    backgroundColor: '#26262a',
-                    border: '1px solid #34343a',
+                    backgroundColor: 'var(--bg-raised)',
+                    border: '1px solid var(--border-strong)',
                     borderRadius: '8px',
                     boxShadow: 'none',
                   }}
@@ -566,7 +566,7 @@ export default function DashboardPage() {
                 return (
                   <li
                     key={action.id}
-                    className="flex items-center gap-3 border-b border-white/[0.06] py-3 last:border-0 last:pb-0 first:pt-0"
+                    className="flex items-center gap-3 border-b border-gray-100/[0.06] py-3 last:border-0 last:pb-0 first:pt-0"
                   >
                     <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border border-gray-800 bg-gray-900/60 text-gray-500">
                       <Glyph name={action.category_icon} size={16} />
@@ -611,7 +611,7 @@ export default function DashboardPage() {
                 return (
                   <li
                     key={bill.id}
-                    className="flex items-center gap-3 border-b border-white/[0.06] py-3 last:border-0 last:pb-0 first:pt-0"
+                    className="flex items-center gap-3 border-b border-gray-100/[0.06] py-3 last:border-0 last:pb-0 first:pt-0"
                   >
                     <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border border-gray-800 bg-gray-900/60 text-gray-500">
                       <Glyph name={bill.category_icon} size={16} />

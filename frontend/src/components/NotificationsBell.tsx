@@ -124,7 +124,7 @@ export default function NotificationsBell() {
       >
         <Glyph name="🔔" size={18} />
         {unreadCount > 0 && (
-          <span className="absolute -top-0.5 -left-0.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-red-500 px-1 font-mono text-[10px] text-white">
+          <span className="absolute -top-0.5 -left-0.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-red-500 px-1 font-mono text-[10px] text-gray-100">
             {unreadCount > 9 ? '9+' : unreadCount}
           </span>
         )}
